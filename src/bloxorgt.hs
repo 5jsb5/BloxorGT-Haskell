@@ -85,8 +85,11 @@ fila x = div x 10
 casellaFila :: Int -> Int
 casellaFila x = mod x 10
 
-partida :: Tauler -> IO()
-partida t = do
+partida :: Tauler -> Int -> Int -> IO()
+partida t x y = do
+ putStrLn(" ")
+ putStrLn("Moviments en horitzontal: " ++ (show x))
+ putStrLn("Moviments en vertical: " ++ (show y))
  putStrLn(" ")
  putStrLn("On mous la peça? (WASD) ")
  putStrLn(" ")
@@ -100,7 +103,11 @@ partida t = do
  mostraTaulerFinal taulerAra
  if(pecaDespres == final)
  then putStrLn("Partida finalitzada")
- else partida taulerAra
+ else if (movChar!!0 == 'W' ||movChar!!0 =='S')
+ then partida taulerAra x (y+1)
+ else if (movChar!!0 == 'A' ||movChar!!0 =='D')
+ then partida taulerAra (x+1) y
+ else partida t x y
  
 -- Donat un tauler, dos enters (reprenten la Casella), retorna un nou Tauler on la Terra de la primera Casella sha mogut a la segona Casella.
 moviment :: Tauler -> Int -> Int -> Tauler
@@ -109,8 +116,8 @@ moviment t x y = moviment2 (moviment1 t x) y (casella t (fila x) (casellaFila x)
 -- Donat un Tauler, una Terra i un enter que representa la Casella retorna un nou Tauler on ???.
 moviment2 :: Tauler -> Int -> Maybe Terra -> Tauler
 moviment2 t x p
- | fila x == 0 = [(movimentFilaTerra t (truncate(fromIntegral( fila x))) (casellaFila x) p )] ++ tail t
- | fila x /= 0 = fst(splitAt (fila x) t) ++ [(movimentFilaTerra t (truncate(fromIntegral( fila x))) (casellaFila x) p )] ++ drop 1(snd(splitAt (fila x) t))
+ | fila x == 0 = [(movimentFilaTerra t (truncate(fromIntegral( fila x))) (casellaFila x) (llegirTerra 'B'))] ++ tail t
+ | fila x /= 0 = fst(splitAt (fila x) t) ++ [(movimentFilaTerra t (truncate(fromIntegral( fila x))) (casellaFila x) (llegirCasella 'B'))] ++ drop 1(snd(splitAt (fila x) t))
 
 -- Donat un Tauler i un enter que representa la Casella retorna un nou Tauler on ???.
 moviment1 :: Tauler -> Int -> Tauler
@@ -158,6 +165,6 @@ main = do
  putStrLn("Comença la partida")
  putStrLn(" ")
  mostraTaulerFinal taulerFinal
- partida taulerFinal
+ partida taulerFinal 0 0
 
 
